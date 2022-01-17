@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <title>kspring</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, user-scalable=yes, minimum-scale=1.0, maximum-scale=1.5">
+        <meta name="description" content="heuron gallery">
+        <meta name="keywords" content="HTML5, css3, scss, javascript, publisher, frontEnd">
+        <meta name="author" content="kspring"/>
+
+        <link rel="stylesheet" type="text/css" href="./css/common.css">
+
+        <script type="text/javascript" src="./js/gallery.js"></script>
+        
+    </head>
+    <body>
+
+        <div class="wrap">
+
+            <div class="gallery-container">
+
+                <div class="gallery-container_btn">
+                    <select id="filterCon" name="author">
+                        <option value="All" selected="selected">All</option>
+                    </select>
+                    <button id="addPhoto" class="add-photo">사진추가</button>
+                </div>
+                
+                <div id="galleryList" class="gallery-container_list">
+                    
+                </div>
+            </div>
+
+            <footer>
+                <p>Copyright 2022. kspring All rights reserved.</p>
+            </footer>
+        </div>
+        
+        <div class="inputPop input-pop none">
+            <div class="input-pop_container">
+                <label for="imgUrl">이미지 URL</label>
+                <input type="url" id="imgUrl">
+                <ul>
+                    <li class="addBtn">업로드</li>
+                    <li class="cancel">취소</li>
+                </ul>
+            </div>
+        </div>
+
+    </body>
+</html>

@@ -1,0 +1,57 @@
+
+@mixin both{
+	content: "";
+	display: block;
+	clear: both;
+}
+@mixin lineH($h){
+	height:$h;
+	line-height:$h;  
+}
+@mixin WH($w,$h){
+	width: $w;
+	height: $h;    
+}
+@mixin position($p: null,$t: null,$b: null,$l: null,$r: null) {
+  position: $p;
+  top: $t;
+  bottom: $b;
+  left: $l;
+  right: $r;
+}
+@mixin bgImg($size) {
+    background: {
+        repeat: no-repeat;
+        size: $size;
+        position:center;
+    }
+}
+@mixin transition{
+	transition: all 0.3s;
+}
+@mixin ani {
+	opacity: 1;
+    -webkit-transform: none;
+    -ms-transform: none;
+    transform: none;
+}
+$breakpoints :(
+	'tablet':(max-width: 1024px),
+	'tablet2':(max-width: 768px),
+	'max-mob2':(max-width: 736px),
+	'max-mob':(max-width: 428px),
+	'mob':(max-width: 360px),
+	'small-mob':(max-width: 320px),
+);
+@mixin screen($name){
+	@if map-has-key($breakpoints, $name) {
+		@media only screen and #{inspect(map-get($breakpoints, $name))} { @content; } 
+	} 
+	@else { @warn "Unfortunately, no value could be retrieved from `#{$breakpoints}`. Please make sure it is defined in `$breakpoints` map."; }
+}
+
+$mainColor: #222;
+$blue: #116ee0;
+$lightGray: #f0f0f0;
+$gray: #707070;
+$galleryM: 2vmin;

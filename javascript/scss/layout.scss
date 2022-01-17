@@ -1,0 +1,208 @@
+@charset "UTF-8";
+/////////// 커스텀 스크롤:s ///////////
+::-webkit-scrollbar-track {
+	box-shadow: inset 0 0 6px rgba(95, 78, 78, 0.1);
+	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+	border-radius: 10px;
+	background-color: #f5f5f5;
+}
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+	background-color: #f5f5f5;
+	margin-left: 5px;
+}
+::-webkit-scrollbar-thumb {
+	border-radius: 10px;
+	background-color: rgba(85, 85, 85, 0.15);
+}
+@include screen('max-mob') {
+	::-webkit-scrollbar-track, ::-webkit-scrollbar, ::-webkit-scrollbar-thumb{
+		display: none !important; 
+	}
+}
+/////////// 커스텀 스크롤:e ///////////
+.none { display: none !important; }
+.input-pop {
+	@include WH(100%,100%);
+	@include position($p:fixed,$t:0);
+	
+	overflow:hidden;
+	-webkit-overflow-scrolling:touch;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	z-index: 1000;
+	background-color:rgba(0,0,0,.5);
+	-webkit-animation-duration: .5s;
+  animation-duration: .5s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+	&_container {
+		background-color: #fff;
+		padding: 4vmin 5vmin 2vmin;
+		border-radius: 10px;
+		label { font-size: 2vmin; }
+		input {
+			@include lineH(30px);
+			width: 50vmin;
+			margin-left: 2.5vmin;
+		}
+		ul {
+			display: flex;
+			justify-content:center;
+			li {
+				@include transition;
+				margin: 2vmin 12px 0 0;
+				padding: 1.5vmin 2vmin;
+				color: #fff;
+				background-color: $blue;
+				border-radius: 5px;
+				cursor: pointer;
+				&:last-child {
+					background-color: $gray;
+					margin-right: 0;
+				}
+				&:hover {
+					opacity: .7;
+				}
+			}
+		}
+	}
+}
+.wrap {
+	position: relative;
+	height: 100%;
+}
+/////////// gallery-container:s ///////////
+.gallery-container {
+	width: 100%;
+	min-height: calc(100% - 50px);
+	position: relative;
+	padding: 5vmin 3vmin;
+	&:after{ @include both; }
+
+	&_btn {
+		width: 100%;
+		margin-bottom: 20px;
+		display: flex;
+		justify-content: flex-end;
+		select {
+			padding: 0 17px 0 10px;
+		}
+		.add-photo {
+			@include transition;
+			font-size: 2.2vmin;
+			background-color: #0b71da;
+			border-radius: 5px;
+			padding: 1vmin 1.5vmin;
+			color: #fff;
+			margin-left: 2vmin;
+			&:hover {
+				opacity: .7;
+			}
+		}
+		&:after{ @include both; }
+	}
+	
+	&_list {
+		width: 100%;
+		display: flex;
+		flex-wrap:wrap;
+		justify-content: flex-start;
+		figure {
+			width: calc((100% - (#{$galleryM}*2))/3);
+			position: relative;
+			overflow: hidden;
+			margin: 0 $galleryM $galleryM+1 0;
+			&:nth-of-type(3n) {
+				margin-right: 0;
+			}
+			// @media (hover: hover) {
+			// 	&:hover figcaption { display: flex; }
+			// }
+			.thumb {
+				width: 100%;
+				position: relative;
+				background-color: $lightGray;
+				.img {display: none;}
+				.bg-img, .no-img {
+					@include WH(100%,auto);
+					padding-bottom: 56.25%;
+				}
+				.bg-img {
+					@include bgImg(contain);
+					image-rendering: -webkit-optimize-contrast;
+				}
+				.no-img {
+					&:before {
+						@include position($p:absolute,$t:50%);
+						content: "이미지 없음";
+						width: 100%;
+						margin-top: -10px;
+						text-align: center;
+					}
+				}
+				&_btn {
+					@include transition;
+					@include WH(100%,100%);
+					@include position($p:absolute,$t:0,$l:100%);
+					background-color: rgba(0, 0, 0, .5);
+					display: flex;
+					flex-direction: column;
+					justify-content: center;
+					align-items: center;
+					button {
+						@include transition;
+						color: #fff;
+						font-size: 2vmin;
+						padding: 2%;
+						&:hover {
+							opacity: .7;
+						}
+					}
+				}
+				.loading {
+					@include position($p:absolute,$t:0);
+					@include WH(100%,100%);
+					@include bgImg(contain);
+					background-color: rgba(255, 255, 255, .5);
+					&:before {
+						@include bgImg(contain);
+						@include WH(40%,100%);
+						content: "";
+						display: block;
+						background-image: url('../img/loading_icon.gif');
+						margin: 0 auto;
+					}
+				}
+			}
+			
+			figcaption {
+				margin-top: 1.2vmin;
+				p { font-size: 2vmin; }
+			}
+			@include screen('tablet') {
+			}
+			@include screen('tablet2') {
+			}
+			@include screen('max-mob') {
+			}
+		}
+	}
+}
+/////////// gallery-container:e ///////////
+/////////// footer:s ///////////
+footer {
+	@include lineH(50px);
+	width: 100%;
+	text-align: center;
+	color: $mainColor;
+	background-color: #fff;
+	font-weight: 300;
+}
+/////////// footer:e ///////////
+@include screen('max-mob') {
+	$subP:5vw;
+	.popup {padding: 0 $subP;}
+}
