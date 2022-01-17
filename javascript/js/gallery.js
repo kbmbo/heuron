@@ -111,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     inputPop.addEventListener('click', e => {
-        if (e.currentTarget === inputPop || e.currentTarget === cancel ){
+        if (e.target === inputPop || e.target === cancel ){
             imgUrl.value = null;
             inputPop.classList.add('none');
         }
