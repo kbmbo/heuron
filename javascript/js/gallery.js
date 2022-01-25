@@ -62,13 +62,13 @@ document.addEventListener("DOMContentLoaded", () => {
                         elem.onload = () => {//이미지 로드 성공
                             loading.style.display = "none";
                             bgImg.style.display = "block";
+                            resolve();
                         }
                         elem.onerror = () => {//이미지 로드 에러
                             bgImg.className="no-img";
                             loading.style.display = "none";
-                            //reject(); 
+                            reject(); 
                         }
-                        resolve(); // 이미지 없음 썸네일에 삭제버튼 미노출 문제로 onload밖으로 뺌...
                     });                  
                 }
                 
@@ -160,13 +160,13 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     });
-
+    
     const slideBtn = (thumb,thumbW,idx) => {
         let startX;
         let dragging;
 
         document.addEventListener('mousedown', e => { 
-            if (e.target === thumb.querySelector('.imgDel')){ //해당 썸네일 영역이거나 삭제버튼이면 실행
+            if (e.target === thumb.querySelector('.imgDel')){ // 삭제버튼이면 실행
                 galleryJson.splice(idx, 1); // 해당 데이터 삭제
                 galleryLoad(galleryJson);   // 갤러리 로드
                 
@@ -178,7 +178,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         thumb.addEventListener('mousedown', e => {
             e.preventDefault();
-
+            
             if (thumbW < e.offsetX){ //썸네일 중앙 기준 오른쪽 영역에서 스타트 일때 버튼 나올 준비
                 dragging =  true;
                 e.currentTarget.querySelector('.thumb_btn').style.left = `${e.offsetX-10}px`;
@@ -198,7 +198,8 @@ document.addEventListener("DOMContentLoaded", () => {
             let move = startX - e.offsetX
             dragging =  false;
             e.preventDefault();
-            console.log(e.offsetX , startX)
+            console.log(e.offsetX , startX) //e.offsetX이 이상하다..
+
             if (thumbW < startX && e.offsetX < startX){ // 썸네일 중앙 오른쪽에서 스타트 일때 드래그 오른쪽에서 왼쪽일때
                 if ( move > 30 ){  // 마우스 이동이 시작과 끝이 30 이상일때
                     e.currentTarget.querySelector('.thumb_btn').style.left = "0";
