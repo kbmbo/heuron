@@ -59,8 +59,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 async function loadImage(elem) {
                     return new Promise((resolve, reject) => {
-                        elem.onload = () => resolve(loading.style.display = "none", bgImg.style.display = "block"); //이미지 로드 성공
-                        elem.onerror = () => reject(bgImg.className="no-img", loading.style.display = "none"); //이미지 로드 에러
+                        elem.onload = () => {//이미지 로드 성공
+                            loading.style.display = "none";
+                            bgImg.style.display = "block";
+                        }
+                        elem.onerror = () => {//이미지 로드 에러
+                            bgImg.className="no-img";
+                            loading.style.display = "none";
+                            //reject(); 
+                        }
+                        resolve(); // 이미지 없음 썸네일에 삭제버튼 미노출 문제로 onload밖으로 뺌...
                     });                  
                 }
                 
