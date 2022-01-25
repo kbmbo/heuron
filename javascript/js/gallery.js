@@ -49,36 +49,35 @@ document.addEventListener("DOMContentLoaded", () => {
             authorValue.push(obj.author)
             galleryCon.insertAdjacentHTML('beforeend', thumbNail(obj));
             const imgContainer = galleryCon.querySelectorAll(".imgContainer");
-            Array.from(imgContainer).forEach( el => {
-                const thumb = el.querySelector('.thumb');
+            Array.from(imgContainer).forEach( (el,idx) => {
+
                 const imgTag = el.querySelector('.img');
                 const bgImg = el.querySelector('.bgImg');
-                const thumbW = thumb.offsetWidth/2;
                 const loading = el.querySelector('.loading');
+                let thumb = el.querySelector('.thumb');
+                let thumbW = thumb.offsetWidth/2;
 
                 async function loadImage(elem) {
                     return new Promise((resolve, reject) => {
-                        elem.onload = () => {
-                            resolve();
-                            loading.style.display = "none";
-                            bgImg.style.display = "block";
-                        }
-                        elem.onerror = () => {
-                            bgImg.className="no-img"
-                            loading.style.display = "none";
-                            reject();
-                        }
+                        elem.onload = () => resolve(loading.style.display = "none", bgImg.style.display = "block"); //이미지 로드 성공
+                        elem.onerror = () => reject(bgImg.className="no-img", loading.style.display = "none"); //이미지 로드 에러
                     });                  
                 }
                 
                 const funcAsync = async () => {
                     await loadImage(imgTag);
                 };
-                funcAsync().then(result => {
-                    slideBtn(thumb,thumbW);
+                funcAsync().then(() => {
+
+                    slideBtn(thumb,thumbW,idx);
+
+                    window.addEventListener('resize', () => { // resize시 삭제 버튼 이벤트 위치 사이즈 반영 
+                        thumb = el.querySelector('.thumb');
+                        thumbW = thumb.offsetWidth/2;
+                        slideBtn(thumb,thumbW,idx);
+                    });
                 });
             })
-            
             
         });
         
@@ -110,41 +109,29 @@ document.addEventListener("DOMContentLoaded", () => {
         } 
     });
 
-    inputPop.addEventListener('click', e => {
+    inputPop.addEventListener('click', e => { //사진추가 팝업 닫기
         if (e.target === inputPop || e.target === cancel ){
             imgUrl.value = null;
             inputPop.classList.add('none');
         }
     });
 
-    addBtn.addEventListener('click', () => {
-        let noSpace = imgUrl.value.replace(/(\s*)/g, "");
-        if (noSpace === ''){
+    addBtn.addEventListener('click', () => { //이미지 업로드 버튼
+        let noSpace = imgUrl.value.replace(/(\s*)/g, ""); //입력된 값에서 스패이스 지우기
+        if (noSpace === ''){ //공백 일때
             alert('URL을 입력하세요');
         } else {
-            galleryJson.unshift({ author: "test", download_url: noSpace });
-            galleryLoad(galleryJson);
-            inputPop.classList.add('none');
-            imgUrl.value = null;
+            galleryJson.unshift({ author: "test", download_url: noSpace }); // 입력한 url 반영
+            galleryLoad(galleryJson); //추가된 데이터로 갤러디 다시 로드
+            inputPop.classList.add('none'); //url입력 창 닫기
+            imgUrl.value = null; //인풋 비우기
         }
     });
-    
-    galleryCon.addEventListener('mouseenter', () => {
-        
-        const imgDel = galleryCon.querySelectorAll('.imgDel');
-        
-        Array.from(imgDel).forEach( (el,idx) => el.addEventListener('click', () => {
-                galleryJson.splice(idx, 1);
-                galleryLoad(galleryJson);
-            })
-        )
-        
-    });
 
-    filterCon.addEventListener('change', (e) => {
+    filterCon.addEventListener('change', (e) => { //셀렉트 박스 채인지 이벤트 author 필터 
 
         const selectChange = galleryCon.querySelectorAll(".imgContainer");
-        let active = e.target.value;
+        const active = e.target.value;
 
         console.log(`Your selection ${e.target.value}`);
         
@@ -154,44 +141,62 @@ document.addEventListener("DOMContentLoaded", () => {
                 el.classList.add('zoomIn');
                 el.classList.remove('fadeOutDown','none');
             } else {
-                el.classList.add('fadeOutDown');
-                setTimeout(function(){
-                    el.classList.add('none');
-                    if(el.dataset.filter === active){
-                        el.classList.add('zoomIn');
-                        el.classList.remove('fadeOutDown','none');
+                el.classList.add('fadeOutDown'); //전체 페이드 다운
+                setTimeout(function(){ //0.5초후 실헹
+                    el.classList.add('none'); //전체 디스플레이 숨김
+                    if(el.dataset.filter === active){ // 선택된 사진 디스플레이
+                        el.classList.add('zoomIn'); //줌인
+                        el.classList.remove('fadeOutDown','none'); //위에 숨김처리했던 css삭제
                     } 
                 },500);
             }
         });
     });
 
-    const slideBtn = (thumb,thumbW) => {
+    const slideBtn = (thumb,thumbW,idx) => {
         let startX;
+        let dragging;
 
-        document.addEventListener('mousedown', (e) => {
-            if(e.target === thumb.querySelector('.thumb') || e.target === thumb.querySelector('.imgDel')){
-                return
+        document.addEventListener('mousedown', e => { 
+            if (e.target === thumb.querySelector('.imgDel')){ //해당 썸네일 영역이거나 삭제버튼이면 실행
+                galleryJson.splice(idx, 1); // 해당 데이터 삭제
+                galleryLoad(galleryJson);   // 갤러리 로드
+                
             } else {
-                thumb.querySelector('.thumb_btn').style.left = "100%";
+                thumb.querySelector('.thumb_btn').style.left = "100%"; // 삭제 박스 나와 있는 상태에서 삭제 버튼 외 영역 눌렸을때 닫기 
             }
             
         })
         
-        thumb.addEventListener('mousedown', (e) => {
+        thumb.addEventListener('mousedown', e => {
             e.preventDefault();
-            if (thumbW < e.offsetX){ //썸네일 중앙 오른쪽에서 스타트 일때 버튼 나올 준비
-                e.currentTarget.querySelector('.thumb_btn').style.left = `${e.offsetX}px`;
+
+            if (thumbW < e.offsetX){ //썸네일 중앙 기준 오른쪽 영역에서 스타트 일때 버튼 나올 준비
+                dragging =  true;
+                e.currentTarget.querySelector('.thumb_btn').style.left = `${e.offsetX-10}px`;
             }
             return startX = e.offsetX
         });
-        
-        thumb.addEventListener('mouseup', (e) => {
+
+        thumb.addEventListener('mousemove', e => {
             e.preventDefault();
-            if ( thumbW < startX && startX > (e.offsetX+25) ){ // 썸네일 중앙 오른쪽에서 스타트 이면서 좌에서 우로 마우스 이동 후 
-                e.currentTarget.querySelector('.thumb_btn').style.left = "0";
-            } else if( startX < e.offsetX || startX <= (e.offsetX+25) ){// 우에서 좌로 마우스 이동 후 또는 스타트 이후 그래그 이동이 적었을때 원위치
-                e.currentTarget.querySelector('.thumb_btn').style.left = "100%";
+
+            if (dragging && e.offsetX < startX){ //드래그 시작 true, 오른쪽에서 왼쪽일때 무브 시작
+                e.currentTarget.querySelector('.thumb_btn').style.left = `${e.offsetX-10}px`;
+            }
+        });
+        
+        thumb.addEventListener('mouseup', e => {
+            let move = startX - e.offsetX
+            dragging =  false;
+            e.preventDefault();
+            console.log(e.offsetX , startX)
+            if (thumbW < startX && e.offsetX < startX){ // 썸네일 중앙 오른쪽에서 스타트 일때 드래그 오른쪽에서 왼쪽일때
+                if ( move > 30 ){  // 마우스 이동이 시작과 끝이 30 이상일때
+                    e.currentTarget.querySelector('.thumb_btn').style.left = "0";
+                } else if( move <= 30 ){// 드래그 이동이 적었을때 원위치
+                    e.currentTarget.querySelector('.thumb_btn').style.left = "100%";
+                }
             }
 
         });
